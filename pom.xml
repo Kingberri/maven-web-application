@@ -104,11 +104,23 @@
 	      <name>Landmark Technologies Snapshot Nexus Repository </name>
 	      <url>http://172.31.7.148:8081/repository/maven-web-appapp-snapshots/</url>
 	    </snapshotRepository>
+		
+		 <repository>
+	      <id>nexus</id>
+	      <name>Landmark Technologies Releases Nexus Repository</name>
+	      <url>http:http://172.31.7.148:8081/repository/tesla-prod-releases/</url>
+	    </repository>
+		
+	  <snapshotRepository>
+	      <id>nexus</id>
+	      <name>Landmark Technologies Snapshot Nexus Repository </name>
+	      <url>http://172.31.7.148:8081/repository/tesla-prod-snapshots/</url>
+	    </snapshotRepository>
 	    
 	</distributionManagement>
 	
 	<build>
-		<finalName>maven-web-app</finalName>
+		<finalName>maven-web-app-tesla-prod</finalName>
 		
 		<plugins>
 			<plugin>
