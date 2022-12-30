@@ -6,9 +6,9 @@
 	<artifactId>maven-web-application</artifactId>
 	<packaging>war</packaging>
 	
-	<version>0.0.2-SNAPSHOT</version> 
+	<version>0.0.1-SNAPSHOT</version> 
 	
-	<name>maven-web-application-tesla-project</name>
+	<name>maven-web-application-tesla-project-2.0</name>
 
 	<description>Maven Web Project for Java Project</description>
 
