@@ -1,0 +1,80 @@
+pipeline{
+    agent any
+    tools{
+        maven "maven3.8.6"
+    }
+    stages{
+        //agent{}
+        stage('1getcode'){
+            steps{
+            sh "echo 'clonning the latest application version' "
+           git 'https://github.com/Kingberri/maven-web-application/'
+            }
+        }
+        stage('2Test&Build'){
+            //agent{}
+            steps{
+            sh "echo 'running JUnit Test Cases' "
+            sh "echo 'Tests must pass to create artifacts' " 
+                sh "mvn clean package"
+            }
+        }
+        stage('3codeQuality'){
+            steps{
+                sh "echo 'performing code quality analysis with sonarqube' "
+                sh "mvn sonar:sonar"
+            }
+        }
+        stage('4Upload-artifacts-to-Nexus'){
+             steps{
+                sh "echo 'Uploading Artifacts to Nexus Artifactory' "
+                sh "mvn deploy"
+            }
+        }
+        stage('5deploy-to-UAT-Environment'){
+            steps{
+        sh "echo 'deploy application to UAT environment for review' "
+        deploy adapters: [tomcat9(credentialsId: 'tomcat9-credentials', path: '', url: 'http://172.31.40.150:8080/')], contextPath: null, war: 'target/*war'
+            }
+        }
+        stage('6Approval-Gate'){
+            steps{
+        sh "echo 'ready for review' "
+        timeout(time:5, unit:'DAYS'){
+        input message: 'Application ready for deployment, Please review and approve'
+        }
+        }
+        }
+        stage('7Deploy-to-Production'){
+        steps{
+            sh "echo 'deploying to container Tomcat-9' "
+        //sh "sleep:50"
+        deploy adapters: [tomcat9(credentialsId: 'tomcat9-credentials', path: '', url: 'http://172.31.40.150:8080/')], contextPath: null, war: 'target/*war'
+        }
+        }
+    }
+    post{
+        always{
+            emailext body: '''Hey Team
+Please check Build Status
+Thank you all for the hard-work
+DevOps Team Lead
+Kingberri''', recipientProviders: [developers()], subject: 'All Builds', to: 'babakingko@gmail.com'
+        }
+        success{
+            emailext body: '''Hey Team
+Great job on this one, build and deployment is successful
+Thank you all for the hard-work
+DevOps Team Lead
+Kingberri''', recipientProviders: [developers()], subject: 'Success', to: 'babakingko@gmail.com'
+        }
+        failure{
+            emailext body: '''Hey Team
+Unfortunately, build and deployment is failed, please check logs and resolve issues
+Thank you all for the hard-work
+DevOps Team Lead
+Kingberri''', recipientProviders: [developers()], subject: 'Build Failure', to: 'babakingko@gmail.com'
+        }
+    }
+
+    }
